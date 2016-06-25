@@ -1,16 +1,15 @@
-var map;
 // var myURI = "/Mapas/rest/rutas/1"; Original
 //var myURI = "rest/coordenadas"; Funcionando
 var myURI = "rest/rutas/1";
 var mapProp = {
-	center : new google.maps.LatLng(-34.9038055, -57.9392111, 18),
+	//center : new google.maps.LatLng(-34.9038055, -57.9392111, 18),
 	zoom : 14,
 	mapTypeId : google.maps.MapTypeId.ROADMAP
 };
-var mapProp;
+
 var ok=false;
 var puntos = [];
-
+var map;
 // Evento
 google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -44,7 +43,9 @@ function obtenerPrimerCoordenada(){
 				console.log(result.lat);
 				mapProp.center= new google.maps.LatLng(result.lat, result.lon);
 				ok=true;
-				initialize();
+				//initialize();
+				
+				map.setCenter(new google.maps.LatLng(result.lat, result.lon));
 			}
 			
 		});
@@ -156,6 +157,7 @@ function limpiarMapa() {
 		type : "DELETE",
 		success : function(result) {
 			mapProp.center= new google.maps.LatLng(result.lat, result.lon);
+			
 			$("#limpiarMapa").hide();
 			initialize();
 		}
@@ -174,7 +176,6 @@ function borrarMarker(id) {
 		url : myURI+"/coordenadas?id_coordenada="+id+"",
 		type : "DELETE",
 		success : function(result) {
-			
 			mapProp.center= new google.maps.LatLng(result.lat, result.lon);
 					
 				
