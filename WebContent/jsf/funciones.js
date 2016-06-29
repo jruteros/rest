@@ -1,55 +1,41 @@
-// var myURI = "/Mapas/rest/rutas/1"; Original
-//var myURI = "rest/coordenadas"; Funcionando
-var myURI = "rest/rutas/1";
+var myURI = "Mapas/rest/rutas/1"; //Original
+
 var mapProp = {
-	//center : new google.maps.LatLng(-34.9038055, -57.9392111, 18),
+	center : new google.maps.LatLng(-34.9038055, -57.9392111, 18),
 	zoom : 14,
 	mapTypeId : google.maps.MapTypeId.ROADMAP
 };
 
-var ok=false;
 var puntos = [];
 var map;
-// Evento
+
 google.maps.event.addDomListener(window, 'load', initialize);
 
 /**
  * Inicializa el mapa
  */
 function initialize() {
-	if (ok==false){
-		obtenerPrimerCoordenada();
-	}
-	
-		map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+	map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
 
-		map.addListener('click', function(e) {
-			console.log("click");
-			agregarMarker(e.latLng);
-
-		});
+	map.addListener('click', function(e) {
+		console.log("click");
+		agregarMarker(e.latLng);
+	});
 
 	puntos = [];
 	obtenerMarkers();
 }
 
 // Metodo añadido por Alex e Ignacio
-function obtenerPrimerCoordenada(){
-		$.ajax({
-			dataType : "json",
-			url : myURI+"/coordenadas/primerCoordenada",
-			type : "GET",
-			success : function(result) {
-				console.log(result.lat);
-				mapProp.center= new google.maps.LatLng(result.lat, result.lon);
-				ok=true;
-				//initialize();
-				
-				map.setCenter(new google.maps.LatLng(result.lat, result.lon));
-			}
-			
-		});
-	
+function obtenerPrimerCoordenada() {
+	$.ajax({
+		dataType : "json",
+		url : myURI + "/coordenadas/primerCoordenada",
+		type : "GET",
+		success : function(result) {
+			map.setCenter(new google.maps.LatLng(result.lat, result.lon));
+		}
+	});
 }
 
 // Obtiene markers y los dibuja
@@ -57,14 +43,11 @@ function obtenerMarkers(dibujar) {
 
 	$.ajax({
 		dataType : "json",
-		url : myURI+"/coordenadas",
+		url : myURI + "/coordenadas",
 		success : function(result) {
-			//console.log("result " + result);
 			puntos = [];
 			$.each(result, function(i, dato) {
-				//console.log("dato" + i + dato.lat);
 				dibujarMarker(dato);
-
 			});
 			dibujarRecorrido();
 		}
@@ -77,10 +60,10 @@ function dibujarMarker(dato) {
 
 	var marker = new google.maps.Marker({
 		position : position,
-		icon: {
-		      path: google.maps.SymbolPath.CIRCLE,
-		      scale: 3
-		    },
+		icon : {
+			path : google.maps.SymbolPath.CIRCLE,
+			scale : 3
+		},
 		id : dato.id
 	});
 
@@ -103,17 +86,15 @@ function agregarMarker(latLng) {
 	};
 	$.ajax({
 		data : punto,
-		
-		url : myURI+"/coordenadas?lat="+latLng.lat()+"&lon="+latLng.lng()+"",
-		
+
+		url : myURI + "/coordenadas?lat=" + latLng.lat() + "&lon="
+				+ latLng.lng() + "",
+
 		type : "POST",
 		success : function(result) {
 			$("#limpiarMapa").show();
 			obtenerMarkers();
 		},
-		error: function(){
-			console.log("errorAjax");
-		}
 	});
 
 }
@@ -153,11 +134,11 @@ function limpiarMapa() {
 	$.ajax({
 		data : punto,
 		dataType : "json",
-		url : myURI+"/coordenadas/eliminarTodo",
+		url : myURI + "/coordenadas/eliminarTodo",
 		type : "DELETE",
 		success : function(result) {
-			mapProp.center= new google.maps.LatLng(result.lat, result.lon);
-			
+			mapProp.center = new google.maps.LatLng(result.lat, result.lon);
+
 			$("#limpiarMapa").hide();
 			initialize();
 		}
@@ -173,13 +154,10 @@ function borrarMarker(id) {
 	$.ajax({
 		data : punto,
 		dataType : "json",
-		url : myURI+"/coordenadas?id_coordenada="+id+"",
+		url : myURI + "/coordenadas?id_coordenada=" + id + "",
 		type : "DELETE",
 		success : function(result) {
-			mapProp.center= new google.maps.LatLng(result.lat, result.lon);
-					
-				
-			
+			mapProp.center = new google.maps.LatLng(result.lat, result.lon);
 			initialize();
 		}
 	});
