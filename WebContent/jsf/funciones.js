@@ -8,13 +8,16 @@ var mapProp = {
 
 var puntos = [];
 var map;
-
+var ok = false;
 google.maps.event.addDomListener(window, 'load', initialize);
 
 /**
  * Inicializa el mapa
  */
 function initialize() {
+	if (ok==false){
+		obtenerPrimerCoordenada();
+	}
 	map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
 
 	map.addListener('click', function(e) {
@@ -30,10 +33,11 @@ function initialize() {
 function obtenerPrimerCoordenada() {
 	$.ajax({
 		dataType : "json",
-		url : myURI + "/coordenadas/primerCoordenada",
+		url : myURI + "/primerCoordenada",
 		type : "GET",
 		success : function(result) {
 			map.setCenter(new google.maps.LatLng(result.lat, result.lon));
+			ok=true;
 		}
 	});
 }
@@ -43,7 +47,7 @@ function obtenerMarkers(dibujar) {
 
 	$.ajax({
 		dataType : "json",
-		url : myURI + "/coordenadas",
+		url : myURI,
 		success : function(result) {
 			puntos = [];
 			$.each(result, function(i, dato) {
@@ -87,12 +91,11 @@ function agregarMarker(latLng) {
 	$.ajax({
 		data : punto,
 
-		url : myURI + "/coordenadas?lat=" + latLng.lat() + "&lon="
-				+ latLng.lng() + "",
+		url : myURI,
 
 		type : "POST",
 		success : function(result) {
-			$("#limpiarMapa").show();
+			$("#limpiarMapa").removeAttr('disabled');
 			obtenerMarkers();
 		},
 	});
@@ -134,12 +137,14 @@ function limpiarMapa() {
 	$.ajax({
 		data : punto,
 		dataType : "json",
-		url : myURI + "/coordenadas/eliminarTodo",
+		url : myURI,
 		type : "DELETE",
 		success : function(result) {
+			if (result =="undefined" || result == null )
+				return ;
 			mapProp.center = new google.maps.LatLng(result.lat, result.lon);
-
-			$("#limpiarMapa").hide();
+			console.log(result);
+			$("#limpiarMapa").attr('disabled','disabled');
 			initialize();
 		}
 	});
@@ -154,7 +159,7 @@ function borrarMarker(id) {
 	$.ajax({
 		data : punto,
 		dataType : "json",
-		url : myURI + "/coordenadas?id_coordenada=" + id + "",
+		url : myURI,
 		type : "DELETE",
 		success : function(result) {
 			mapProp.center = new google.maps.LatLng(result.lat, result.lon);
