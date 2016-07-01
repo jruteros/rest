@@ -63,8 +63,9 @@ public class CoordenadasResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON) //Devuelve la ultima coordenada para que el mapa quede centrado y no se vaya a otro lado
 	public Coordenada eliminarCoordenada(@FormParam("id") String id_coordenada){
+		Coordenada coordenada;
 		if (id_coordenada == null || id_coordenada.length() < 1){
-			Coordenada coordenada = null;
+			coordenada = null;
 			List<Coordenada> lista = coordenadaService.getCoordenadasList();
 			if (lista.size() != 0){
 				coordenada = lista.get(0);
@@ -72,8 +73,9 @@ public class CoordenadasResource {
 			}
 			return coordenada;
 		}else{
+			coordenada = coordenadaService.obtenerAnteriorCoordenada(id_coordenada);
 			coordenadaService.eliminarCoordenada(id_coordenada);
-			return coordenadaService.getCoordenadasList().get(coordenadaService.getCoordenadasList().size()-1);
+			return coordenada;
 		}
 	}
 }

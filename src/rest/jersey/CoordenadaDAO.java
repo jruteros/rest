@@ -53,4 +53,16 @@ public class CoordenadaDAO {
 	public void eliminarTodo() {
 		coordenadas.clear();
 	}
+
+	public Coordenada recuperarAnteriorCoordenada(String id) {
+		List<Coordenada> lista = this.recuperarTodos();
+		int i;
+		for(i=1; i<lista.size(); i++){
+            if ((lista.get(i).getId().equals(id))){
+            	break;
+            }
+        }
+		
+		return lista.get(i-1);
+	}
 }

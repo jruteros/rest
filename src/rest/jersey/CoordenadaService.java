@@ -26,4 +26,12 @@ public class CoordenadaService {
 	public void eliminarCoordenada(String id) {
 		coordenadaDAO.eliminar(id);
 	}
+
+	public Coordenada recuperarCoordenada(String id) {
+		return coordenadaDAO.recuperar(id);
+	}
+
+	public Coordenada obtenerAnteriorCoordenada(String id) {
+		return coordenadaDAO.recuperarAnteriorCoordenada(id);
+	}
 }
